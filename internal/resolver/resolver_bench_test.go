@@ -156,4 +156,3 @@ func BenchmarkClearCache(b *testing.B) {
 		r.ClearCache()
 	}
 }
-

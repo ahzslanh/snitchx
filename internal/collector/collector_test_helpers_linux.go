@@ -15,4 +15,3 @@ func userCacheSize() int {
 	defer userCache.RUnlock()
 	return len(userCache.m)
 }
-

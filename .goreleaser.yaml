@@ -1,6 +1,6 @@
 version: 2
 
-project_name: snitch
+project_name: snitchx
 
 before:
   hooks:
@@ -8,6 +8,7 @@ before:
 
 builds:
   - id: linux
+    binary: snitchx
     env:
       - CGO_ENABLED=0
     goos:
@@ -20,9 +21,24 @@ builds:
       - "7"
     ldflags:
       - -s -w
-      - -X snitch/cmd.Version={{.Version}}
-      - -X snitch/cmd.Commit={{.ShortCommit}}
-      - -X snitch/cmd.Date={{.Date}}
+      - -X github.com/ahzslanh/snitchx/cmd.Version={{.Version}}
+      - -X github.com/ahzslanh/snitchx/cmd.Commit={{.ShortCommit}}
+      - -X github.com/ahzslanh/snitchx/cmd.Date={{.Date}}
+
+  - id: windows
+    binary: snitchx
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/ahzslanh/snitchx/cmd.Version={{.Version}}
+      - -X github.com/ahzslanh/snitchx/cmd.Commit={{.ShortCommit}}
+      - -X github.com/ahzslanh/snitchx/cmd.Date={{.Date}}
 
 archives:
   - formats:
@@ -53,42 +69,22 @@ changelog:
 
 nfpms:
   - id: packages
-    package_name: snitch
-    vendor: karol broda
-    homepage: https://github.com/karol-broda/snitch
-    maintainer: karol broda
-    description: a friendlier ss/netstat for humans
+    ids:
+      - linux
+    package_name: snitchx
+    vendor: snitchX
+    homepage: https://github.com/ahzslanh/snitchx
+    maintainer: snitchX contributors
+    description: "cross-platform security inspection: network, processes, services, compliance"
     license: MIT
     formats:
       - deb
       - rpm
       - apk
 
-aurs:
-  - name: snitch-bin
-    homepage: https://github.com/karol-broda/snitch
-    description: a friendlier ss/netstat for humans
-    maintainers:
-      - "Karol Broda <me@karolbroda.com>"
-    license: MIT
-    private_key: "{{ .Env.AUR_KEY }}"
-    git_url: "ssh://aur@aur.archlinux.org/snitch-bin.git"
-    depends:
-      - glibc
-    provides:
-      - snitch
-    conflicts:
-      - snitch
-    package: |-
-      install -Dm755 "./snitch" "${pkgdir}/usr/bin/snitch"
-      install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/snitch/LICENSE"
-      install -Dm644 "./README.md" "${pkgdir}/usr/share/doc/snitch/README.md"
-    commit_msg_template: "Update to {{ .Tag }}"
-    skip_upload: auto
-
 release:
   github:
-    owner: karol-broda
-    name: snitch
+    owner: ahzslanh
+    name: snitchx
   draft: false
   prerelease: auto

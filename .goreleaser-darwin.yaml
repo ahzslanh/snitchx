@@ -1,9 +1,10 @@
 version: 2
 
-project_name: snitch
+project_name: snitchx
 
 builds:
   - id: darwin
+    binary: snitchx
     env:
       - CGO_ENABLED=1
     goos:
@@ -13,9 +14,9 @@ builds:
       - arm64
     ldflags:
       - -s -w
-      - -X snitch/cmd.Version={{.Version}}
-      - -X snitch/cmd.Commit={{.ShortCommit}}
-      - -X snitch/cmd.Date={{.Date}}
+      - -X github.com/ahzslanh/snitchx/cmd.Version={{.Version}}
+      - -X github.com/ahzslanh/snitchx/cmd.Commit={{.ShortCommit}}
+      - -X github.com/ahzslanh/snitchx/cmd.Date={{.Date}}
 
 archives:
   - formats:
@@ -31,9 +32,8 @@ archives:
 
 release:
   github:
-    owner: karol-broda
-    name: snitch
+    owner: ahzslanh
+    name: snitchx
   draft: false
   prerelease: auto
   mode: append
-

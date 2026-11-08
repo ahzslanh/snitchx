@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ahzslanh/snitchx/internal/collector"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/x/exp/teatest"
-	"github.com/karol-broda/snitch/internal/collector"
 )
 
 func TestTUI_InitialState(t *testing.T) {
@@ -775,4 +775,3 @@ func TestTUI_ExportModalRenderWithStats(t *testing.T) {
 		t.Error("modal should show format options")
 	}
 }
-

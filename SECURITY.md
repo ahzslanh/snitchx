@@ -7,14 +7,14 @@
 | latest  | :white_check_mark: |
 | < latest| :x:                |
 
-i recommend always using the latest version of snitch.
+i recommend always using the latest version of snitchx.
 
 ## Reporting a Vulnerability
 
 if you discover a security vulnerability, please report it responsibly:
 
 1. **do not** open a public issue for security vulnerabilities
-2. email the maintainer directly or use github's [private vulnerability reporting](https://github.com/karol-broda/snitch/security/advisories/new)
+2. email the maintainer directly or use github's [private vulnerability reporting](https://github.com/ahzslanh/snitchx/security/advisories/new)
 3. include as much detail as possible:
    - description of the vulnerability
    - steps to reproduce
@@ -29,13 +29,13 @@ if you discover a security vulnerability, please report it responsibly:
 
 ## Security Considerations
 
-snitch reads network socket information from the operating system:
+snitchx reads network socket information from the operating system:
 
 - **linux**: reads from `/proc/net/*` which requires appropriate permissions
 - **macos**: uses system APIs that may require elevated privileges
 
-snitch does not:
-- make network connections (except for `snitch upgrade` which fetches from github)
+snitchx does not:
+- make network connections (except for `snitchx upgrade` which fetches from github)
 - write to system files
 - collect or transmit any data
 
@@ -43,7 +43,7 @@ snitch does not:
 
 the following are considered in-scope for security reports:
 
-- vulnerabilities in snitch code
+- vulnerabilities in snitchx code
 - insecure defaults or configurations
 - privilege escalation issues
 - information disclosure beyond intended functionality

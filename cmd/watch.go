@@ -24,7 +24,7 @@ var watchCmd = &cobra.Command{
 	Long: `Stream connection events as json frames.
 	
 Filters are specified in key=value format. For example:
-  snitch watch proto=tcp state=established
+  snitchx watch proto=tcp state=established
 
 Available filters:
   proto, state, pid, proc, lport, rport, user, laddr, raddr, contains

@@ -6,14 +6,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/karol-broda/snitch/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/collector"
 )
 
 func TestPath_XDGStateHome(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", "/custom/state")
 	path := Path()
 
-	expected := "/custom/state/snitch/tui.json"
+	expected := filepath.Join("/custom/state", "snitchx", "tui.json")
 	if path != expected {
 		t.Errorf("Path() = %q, want %q", path, expected)
 	}
@@ -28,7 +28,7 @@ func TestPath_DefaultFallback(t *testing.T) {
 		t.Skip("cannot determine home directory")
 	}
 
-	expected := filepath.Join(home, ".local", "state", "snitch", "tui.json")
+	expected := filepath.Join(home, ".local", "state", "snitchx", "tui.json")
 	if path != expected {
 		t.Errorf("Path() = %q, want %q", path, expected)
 	}
@@ -142,7 +142,7 @@ func TestLoad_InvalidJSON(t *testing.T) {
 	t.Setenv("XDG_STATE_HOME", tmpDir)
 
 	// create directory and invalid json file
-	stateDir := filepath.Join(tmpDir, "snitch")
+	stateDir := filepath.Join(tmpDir, "snitchx")
 	if err := os.MkdirAll(stateDir, 0755); err != nil {
 		t.Fatal(err)
 	}
@@ -161,10 +161,10 @@ func TestSave_CreatesDirectories(t *testing.T) {
 	tmpDir := t.TempDir()
 	t.Setenv("XDG_STATE_HOME", tmpDir)
 
-	// snitch directory should not exist yet
-	snitchDir := filepath.Join(tmpDir, "snitch")
+	// snitchx directory should not exist yet
+	snitchDir := filepath.Join(tmpDir, "snitchx")
 	if _, err := os.Stat(snitchDir); err == nil {
-		t.Fatal("expected snitch directory to not exist initially")
+		t.Fatal("expected snitchx directory to not exist initially")
 	}
 
 	err := Save(Default())

@@ -1,7 +1,7 @@
 .PHONY: build test lint demo demo-build demo-run clean
 
 build:
-	go build -o snitch .
+	go build -o snitchx .
 
 test:
 	go test ./...
@@ -12,12 +12,12 @@ lint:
 demo: demo-build demo-run
 
 demo-build:
-	docker build -f demo/Dockerfile -t snitch-demo .
+	docker build -f demo/Dockerfile -t snitchx-demo .
 
 demo-run:
-	docker run --rm -v $(PWD)/demo:/output snitch-demo
+	docker run --rm -v $(PWD)/demo:/output snitchx-demo
 
 clean:
-	rm -f snitch
+	rm -f snitchx
 	rm -f demo/demo.gif
 

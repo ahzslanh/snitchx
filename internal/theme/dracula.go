@@ -21,4 +21,3 @@ var paletteDracula = Palette{
 	Orange:  "#ffb86c",
 	Gray:    "#6272a4", // comment
 }
-

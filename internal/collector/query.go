@@ -156,4 +156,3 @@ func ByProcess(name string) *Query {
 func ByPort(port int) *Query {
 	return NewQuery().LocalPort(port)
 }
-

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	"github.com/karol-broda/snitch/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/collector"
 )
 
 // TUIState holds view options that can be persisted between sessions
@@ -38,7 +38,7 @@ func Path() string {
 		}
 		stateDir = filepath.Join(home, ".local", "state")
 	}
-	return filepath.Join(stateDir, "snitch", "tui.json")
+	return filepath.Join(stateDir, "snitchx", "tui.json")
 }
 
 // Load reads the TUI state from disk.
@@ -130,4 +130,3 @@ func Default() TUIState {
 		ResolvePorts:    false,
 	}
 }
-

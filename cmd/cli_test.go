@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/karol-broda/snitch/internal/errutil"
-	"github.com/karol-broda/snitch/internal/testutil"
+	"github.com/ahzslanh/snitchx/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/testutil"
 )
 
 // TestCLIContract tests the CLI interface contracts as specified in the README
@@ -24,7 +24,7 @@ func TestCLIContract(t *testing.T) {
 			name:           "help_root",
 			args:           []string{"--help"},
 			expectExitCode: 0,
-			expectStdout:   []string{"snitch is a tool for inspecting network connections", "Usage:", "Available Commands:"},
+			expectStdout:   []string{"snitchx is a cross-platform security inspection tool", "Network. Processes. Services. Compliance.", "Usage:", "Available Commands:"},
 			expectStderr:   nil,
 			description:    "Root help should show usage and available commands",
 		},
@@ -72,9 +72,17 @@ func TestCLIContract(t *testing.T) {
 			name:           "version",
 			args:           []string{"version"},
 			expectExitCode: 0,
-			expectStdout:   []string{"snitch", "commit", "built"},
+			expectStdout:   []string{"snitchx", "commit", "built"},
 			expectStderr:   nil,
 			description:    "version command should show version information",
+		},
+		{
+			name:           "version_json",
+			args:           []string{"version", "--json"},
+			expectExitCode: 0,
+			expectStdout:   []string{`"version": "dev"`, `"os":`, `"arch":`},
+			expectStderr:   nil,
+			description:    "version --json should emit machine-readable build info",
 		},
 		{
 			name:           "invalid_command",
@@ -101,8 +109,8 @@ func TestCLIContract(t *testing.T) {
 
 			// Set environment for consistent testing
 			cmd.Env = append(os.Environ(),
-				"SNITCH_NO_COLOR=1",
-				"SNITCH_RESOLVE=0",
+				"SNITCHX_NO_COLOR=1",
+				"SNITCHX_RESOLVE=0",
 			)
 
 			// Run command and capture output
@@ -316,8 +324,8 @@ func TestFlagInteractions(t *testing.T) {
 
 			// Set environment for consistent testing
 			cmd.Env = append(os.Environ(),
-				"SNITCH_NO_COLOR=1",
-				"SNITCH_RESOLVE=0",
+				"SNITCHX_NO_COLOR=1",
+				"SNITCHX_RESOLVE=0",
 			)
 
 			// Run command and capture output
@@ -380,26 +388,26 @@ func TestEnvironmentVariables(t *testing.T) {
 		{
 			name: "snitch_no_color",
 			envVars: map[string]string{
-				"SNITCH_NO_COLOR": "1",
+				"SNITCHX_NO_COLOR": "1",
 			},
 			expectBehavior: "no_color",
-			description:    "SNITCH_NO_COLOR=1 should disable colors",
+			description:    "SNITCHX_NO_COLOR=1 should disable colors",
 		},
 		{
 			name: "snitch_resolve_disabled",
 			envVars: map[string]string{
-				"SNITCH_RESOLVE": "0",
+				"SNITCHX_RESOLVE": "0",
 			},
 			expectBehavior: "numeric",
-			description:    "SNITCH_RESOLVE=0 should enable numeric mode",
+			description:    "SNITCHX_RESOLVE=0 should enable numeric mode",
 		},
 		{
 			name: "snitch_theme",
 			envVars: map[string]string{
-				"SNITCH_THEME": "mono",
+				"SNITCHX_THEME": "mono",
 			},
 			expectBehavior: "mono_theme",
-			description:    "SNITCH_THEME should set the default theme",
+			description:    "SNITCHX_THEME should set the default theme",
 		},
 	}
 
@@ -458,7 +466,7 @@ func TestErrorExitCodes(t *testing.T) {
 
 	for _, tt := range tests {
 		cmd := exec.Command("go", append([]string{"run", "../main.go"}, tt.command...)...)
-		cmd.Env = append(os.Environ(), "SNITCH_NO_COLOR=1")
+		cmd.Env = append(os.Environ(), "SNITCHX_NO_COLOR=1")
 
 		err := cmd.Run()
 

@@ -162,4 +162,3 @@ func TestPrebuiltQueries(t *testing.T) {
 		}
 	})
 }
-

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.programs.snitch;
+  cfg = config.programs.snitchx;
 
   themes = [
     "ansi"
@@ -135,16 +135,16 @@ let
           };
         };
         default = { };
-        description = "Default settings for snitch commands.";
+        description = "Default settings for snitchx commands.";
       };
     };
   };
 in
 {
-  options.programs.snitch = {
-    enable = lib.mkEnableOption "snitch, a friendlier ss/netstat for humans";
+  options.programs.snitchx = {
+    enable = lib.mkEnableOption "snitchx, cross-platform security inspection";
 
-    package = lib.mkPackageOption pkgs "snitch" { };
+    package = lib.mkPackageOption pkgs "snitchx" { };
 
     settings = lib.mkOption {
       type = settingsType;
@@ -159,9 +159,9 @@ in
         }
       '';
       description = ''
-        Configuration written to {file}`$XDG_CONFIG_HOME/snitch/snitch.toml`.
+        Configuration written to {file}`$XDG_CONFIG_HOME/snitchx/snitchx.toml`.
 
-        See <https://github.com/karol-broda/snitch> for available options.
+        See <https://github.com/ahzslanh/snitchx> for available options.
       '';
     };
   };
@@ -169,8 +169,8 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
-    xdg.configFile."snitch/snitch.toml" = lib.mkIf (cfg.settings != { }) {
-      source = tomlFormat.generate "snitch.toml" cfg.settings;
+    xdg.configFile."snitchx/snitchx.toml" = lib.mkIf (cfg.settings != { }) {
+      source = tomlFormat.generate "snitchx.toml" cfg.settings;
     };
   };
 }

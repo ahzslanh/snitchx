@@ -84,4 +84,3 @@ var paletteCatppuccinLatte = Palette{
 	Orange:  "#fe640b", // peach
 	Gray:    "#acb0be", // surface2
 }
-

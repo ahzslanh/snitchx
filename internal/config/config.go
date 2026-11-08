@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/karol-broda/snitch/internal/theme"
+	"github.com/ahzslanh/snitchx/internal/theme"
 	"github.com/spf13/viper"
 )
 
@@ -48,34 +48,34 @@ func Load() (*Config, error) {
 	}
 
 	v := viper.New()
-	
+
 	// set config name and file type (auto-detect based on extension)
-	v.SetConfigName("snitch")
+	v.SetConfigName("snitchx")
 	// don't set config type - let viper auto-detect based on file extension
 	// this allows both .toml and .yaml files to work
-	v.AddConfigPath("$HOME/.config/snitch")
-	v.AddConfigPath("$HOME/.snitch")
-	v.AddConfigPath("/etc/snitch")
+	v.AddConfigPath("$HOME/.config/snitchx")
+	v.AddConfigPath("$HOME/.snitchx")
+	v.AddConfigPath("/etc/snitchx")
 
 	// Environment variables
-	v.SetEnvPrefix("SNITCH")
+	v.SetEnvPrefix("SNITCHX")
 	v.AutomaticEnv()
-	
+
 	// environment variable bindings for readme-documented variables
-	_ = v.BindEnv("config", "SNITCH_CONFIG")
-	_ = v.BindEnv("defaults.resolve", "SNITCH_RESOLVE")
-	_ = v.BindEnv("defaults.dns_cache", "SNITCH_DNS_CACHE")
-	_ = v.BindEnv("defaults.theme", "SNITCH_THEME")
-	_ = v.BindEnv("defaults.color", "SNITCH_NO_COLOR")
-	
+	_ = v.BindEnv("config", "SNITCHX_CONFIG")
+	_ = v.BindEnv("defaults.resolve", "SNITCHX_RESOLVE")
+	_ = v.BindEnv("defaults.dns_cache", "SNITCHX_DNS_CACHE")
+	_ = v.BindEnv("defaults.theme", "SNITCHX_THEME")
+	_ = v.BindEnv("defaults.color", "SNITCHX_NO_COLOR")
+
 	// Set defaults
 	setDefaults(v)
-	
-	// Handle SNITCH_CONFIG environment variable for custom config path
-	if configPath := os.Getenv("SNITCH_CONFIG"); configPath != "" {
+
+	// Handle SNITCHX_CONFIG environment variable for custom config path
+	if configPath := os.Getenv("SNITCHX_CONFIG"); configPath != "" {
 		v.SetConfigFile(configPath)
 	}
-	
+
 	// Try to read config file
 	if err := v.ReadInConfig(); err != nil {
 		// It's OK if config file doesn't exist
@@ -83,16 +83,16 @@ func Load() (*Config, error) {
 			return nil, fmt.Errorf("error reading config file: %w", err)
 		}
 	}
-	
+
 	// Handle special environment variables
 	handleSpecialEnvVars(v)
-	
+
 	// Unmarshal into config struct
 	config := &Config{}
 	if err := v.Unmarshal(config); err != nil {
 		return nil, fmt.Errorf("error unmarshaling config: %w", err)
 	}
-	
+
 	globalConfig = config
 	return config, nil
 }
@@ -117,19 +117,19 @@ func setDefaults(v *viper.Viper) {
 }
 
 func handleSpecialEnvVars(v *viper.Viper) {
-	// Handle SNITCH_NO_COLOR - if set to "1", disable color
-	if os.Getenv("SNITCH_NO_COLOR") == "1" {
+	// Handle SNITCHX_NO_COLOR - if set to "1", disable color
+	if os.Getenv("SNITCHX_NO_COLOR") == "1" {
 		v.Set("defaults.color", "never")
 	}
-	
-	// Handle SNITCH_RESOLVE - if set to "0", disable resolution
-	if os.Getenv("SNITCH_RESOLVE") == "0" {
+
+	// Handle SNITCHX_RESOLVE - if set to "0", disable resolution
+	if os.Getenv("SNITCHX_RESOLVE") == "0" {
 		v.Set("defaults.resolve", false)
 		v.Set("defaults.numeric", true)
 	}
 
-	// Handle SNITCH_DNS_CACHE - if set to "0", disable dns caching
-	if os.Getenv("SNITCH_DNS_CACHE") == "0" {
+	// Handle SNITCHX_DNS_CACHE - if set to "0", disable dns caching
+	if os.Getenv("SNITCHX_DNS_CACHE") == "0" {
 		v.Set("defaults.dns_cache", false)
 	}
 }
@@ -177,8 +177,8 @@ func (c *Config) GetInterval() time.Duration {
 func CreateExampleConfig(path string) error {
 	themeList := strings.Join(theme.ListThemes(), ", ")
 
-	exampleConfig := fmt.Sprintf(`# snitch configuration file
-# See https://github.com/karol-broda/snitch for full documentation
+	exampleConfig := fmt.Sprintf(`# snitchx configuration file
+# See https://github.com/ahzslanh/snitchx for full documentation
 
 [defaults]
 # Default refresh interval for watch/stats/trace commands
@@ -214,7 +214,7 @@ sort_by = ""
 
 [tui]
 # remember view options (filters, sort, resolution) between sessions
-# state is saved to $XDG_STATE_HOME/snitch/tui.json
+# state is saved to $XDG_STATE_HOME/snitchx/tui.json
 remember_state = false
 `, themeList, theme.DefaultTheme)
 

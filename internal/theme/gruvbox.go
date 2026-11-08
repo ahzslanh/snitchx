@@ -42,4 +42,3 @@ var paletteGruvboxLight = Palette{
 	Orange:  "#d65d0e",
 	Gray:    "#928374",
 }
-

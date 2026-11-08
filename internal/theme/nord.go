@@ -21,4 +21,3 @@ var paletteNord = Palette{
 	Orange:  "#d08770", // aurora - nord12
 	Gray:    "#4c566a", // polar night - nord3
 }
-

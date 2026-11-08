@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/testutil"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/testutil"
 )
 
 func TestLsCommand_EmptyResults(t *testing.T) {
@@ -136,6 +137,15 @@ func TestLsCommand_JSONOutput(t *testing.T) {
 	}
 	if !strings.Contains(stdout, `[`) || !strings.Contains(stdout, `]`) {
 		t.Errorf("Expected JSON array format, got: %s", stdout)
+	}
+
+	// JSON output must be valid and free of ANSI styling.
+	var conns []map[string]any
+	if err := json.Unmarshal([]byte(stdout), &conns); err != nil {
+		t.Fatalf("Expected valid JSON without ANSI escapes, got error %v: %q", err, stdout)
+	}
+	if len(conns) != 1 {
+		t.Errorf("Expected 1 connection, got %d", len(conns))
 	}
 }
 

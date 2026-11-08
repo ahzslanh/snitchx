@@ -206,7 +206,7 @@ func TestResolveAddrsParallel(t *testing.T) {
 		"127.0.0.1",
 		"127.0.0.2",
 		"127.0.0.3",
-		"", // should be skipped
+		"",  // should be skipped
 		"*", // should be skipped
 	}
 
@@ -384,4 +384,3 @@ func TestResolveAddr_TrailingDot(t *testing.T) {
 		t.Error("expected trailing dot to be removed")
 	}
 }
-

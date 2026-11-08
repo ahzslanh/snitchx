@@ -2,8 +2,8 @@ package tui
 
 import (
 	"fmt"
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/resolver"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/resolver"
 	"strconv"
 	"strings"
 	"time"
@@ -32,7 +32,7 @@ func (m model) renderTitle() string {
 	visible := m.visibleConnections()
 	total := len(m.connections)
 
-	left := m.theme.Styles.Header.Render("snitch")
+	left := m.theme.Styles.Header.Render("snitchx")
 
 	ago := time.Since(m.lastRefresh).Round(time.Millisecond * 100)
 	right := m.theme.Styles.Normal.Render(fmt.Sprintf("%d/%d connections  %s %s", len(visible), total, SymbolRefresh, formatDuration(ago)))
@@ -358,7 +358,7 @@ func (m model) renderKillModal() string {
 	lines = append(lines, fmt.Sprintf("  user:     %s", c.User))
 	lines = append(lines, fmt.Sprintf("  conns:    %d", connCount))
 	lines = append(lines, "")
-	lines = append(lines, m.theme.Styles.Warning.Render("  sends SIGTERM to process"))
+	lines = append(lines, m.theme.Styles.Warning.Render("  terminates the process"))
 	if connCount > 1 {
 		lines = append(lines, m.theme.Styles.Warning.Render(fmt.Sprintf("  will close all %d connections", connCount)))
 	}
@@ -643,12 +643,12 @@ type columns struct {
 func (m model) columnWidths() columns {
 	// minimum widths (header lengths + padding)
 	c := columns{
-		process: 7,  // "PROCESS"
-		port:    4,  // "PORT"
-		proto:   5,  // "PROTO"
-		state:   5,  // "STATE"
-		local:   5,  // "LOCAL"
-		remote:  6,  // "REMOTE"
+		process: 7, // "PROCESS"
+		port:    4, // "PORT"
+		proto:   5, // "PROTO"
+		state:   5, // "STATE"
+		local:   5, // "LOCAL"
+		remote:  6, // "REMOTE"
 	}
 
 	// scan visible connections to find max content width for each column

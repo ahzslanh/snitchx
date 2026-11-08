@@ -21,4 +21,3 @@ var paletteOneDark = Palette{
 	Orange:  "#d19a66",
 	Gray:    "#5c6370", // comment
 }
-

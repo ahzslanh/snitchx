@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-REPO="karol-broda/snitch"
-BINARY_NAME="snitch"
+REPO="ahzslanh/snitchx"
+BINARY_NAME="snitchx"
 
 # allow override via environment
 INSTALL_DIR="${INSTALL_DIR:-}"

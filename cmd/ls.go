@@ -15,12 +15,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/color"
-	"github.com/karol-broda/snitch/internal/config"
-	"github.com/karol-broda/snitch/internal/errutil"
-	"github.com/karol-broda/snitch/internal/resolver"
-	"github.com/tidwall/pretty"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/config"
+	"github.com/ahzslanh/snitchx/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/resolver"
 	"golang.org/x/term"
 )
 
@@ -42,7 +40,7 @@ var lsCmd = &cobra.Command{
 	Long: `One-shot listing of connections.
 
 Filters are specified in key=value format. For example:
-  snitch ls proto=tcp state=established
+  snitchx ls proto=tcp state=established
 
 Available filters:
   proto, state, pid, proc, lport, rport, user, laddr, raddr, contains, if, mark, namespace, inode, since
@@ -161,13 +159,12 @@ func renderList(connections []collector.Connection, format string, selectedField
 	}
 }
 
-
 func getFieldMap(c collector.Connection) map[string]string {
 	laddr := c.Laddr
 	raddr := c.Raddr
 	lport := strconv.Itoa(c.Lport)
 	rport := strconv.Itoa(c.Rport)
-	
+
 	// apply address resolution
 	if resolveAddrs {
 		if resolvedLaddr := resolver.ResolveAddr(c.Laddr); resolvedLaddr != c.Laddr {
@@ -187,7 +184,7 @@ func getFieldMap(c collector.Connection) map[string]string {
 			rport = resolvedRport
 		}
 	}
-	
+
 	return map[string]string{
 		"pid":       strconv.Itoa(c.PID),
 		"process":   c.Process,
@@ -219,12 +216,8 @@ func printJSON(conns []collector.Connection) {
 		log.Fatalf("Error marshaling to JSON: %v", err)
 	}
 
-	if color.IsColorDisabled() {
-		fmt.Println(string(jsonOutput))
-	} else {
-		colored := pretty.Color(jsonOutput, nil)
-		fmt.Println(string(colored))
-	}
+	// JSON is a machine-readable format; never add ANSI styling.
+	fmt.Println(string(jsonOutput))
 }
 
 func printCSV(conns []collector.Connection, headers bool, timestamp bool, selectedFields []string) {

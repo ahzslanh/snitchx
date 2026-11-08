@@ -12,13 +12,12 @@ var paletteANSI = Palette{
 	BgMuted:  "0",  // black
 	Border:   "8",  // bright black (gray)
 
-	Red:     "1",  // red
-	Green:   "2",  // green
-	Yellow:  "3",  // yellow
-	Blue:    "4",  // blue
-	Magenta: "5",  // magenta
-	Cyan:    "6",  // cyan
-	Orange:  "3",  // yellow (ansi has no orange, fallback to yellow)
-	Gray:    "8",  // bright black
+	Red:     "1", // red
+	Green:   "2", // green
+	Yellow:  "3", // yellow
+	Blue:    "4", // blue
+	Magenta: "5", // magenta
+	Cyan:    "6", // cyan
+	Orange:  "3", // yellow (ansi has no orange, fallback to yellow)
+	Gray:    "8", // bright black
 }
-

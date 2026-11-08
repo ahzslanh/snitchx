@@ -9,9 +9,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/state"
-	"github.com/karol-broda/snitch/internal/theme"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/state"
+	"github.com/ahzslanh/snitchx/internal/theme"
 )
 
 type model struct {

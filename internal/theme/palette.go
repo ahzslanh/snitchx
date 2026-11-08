@@ -108,4 +108,3 @@ func (p *Palette) ToTheme() *Theme {
 		},
 	}
 }
-

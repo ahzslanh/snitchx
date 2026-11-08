@@ -1,6 +1,6 @@
-# Contributing to snitch
+# Contributing to snitchx
 
-thanks for your interest in contributing to snitch! this document outlines how to get started.
+thanks for your interest in contributing to snitchx! this document outlines how to get started.
 
 ## development setup
 
@@ -13,16 +13,16 @@ thanks for your interest in contributing to snitch! this document outlines how t
 ### building from source
 
 ```bash
-git clone https://github.com/karol-broda/snitch.git
-cd snitch
+git clone https://github.com/ahzslanh/snitchx.git
+cd snitchx
 
 # build
 make build
 # or
-go build -o snitch .
+go build -o snitchx .
 
 # run
-./snitch
+./snitchx
 ```
 
 ### running tests
@@ -144,16 +144,16 @@ i may ask clarifying questions or request changes if code appears to be unreview
 
 ## reporting bugs
 
-use the [bug report template](https://github.com/karol-broda/snitch/issues/new?template=bug_report.yml) and include:
+use the [bug report template](https://github.com/ahzslanh/snitchx/issues/new?template=bug_report.yml) and include:
 
-- snitch version (`snitch version`)
+- snitchx version (`snitchx version`)
 - operating system and version
 - steps to reproduce
 - expected vs actual behavior
 
 ## requesting features
 
-use the [feature request template](https://github.com/karol-broda/snitch/issues/new?template=feature_request.yml) and describe:
+use the [feature request template](https://github.com/ahzslanh/snitchx/issues/new?template=feature_request.yml) and describe:
 
 - the problem you're trying to solve
 - your proposed solution
@@ -161,8 +161,8 @@ use the [feature request template](https://github.com/karol-broda/snitch/issues/
 
 ## getting help
 
-- open a [discussion](https://github.com/karol-broda/snitch/discussions) for questions
-- check existing [issues](https://github.com/karol-broda/snitch/issues) before opening new ones
+- open a [discussion](https://github.com/ahzslanh/snitchx/discussions) for questions
+- check existing [issues](https://github.com/ahzslanh/snitchx/issues) before opening new ones
 
 ## license
 

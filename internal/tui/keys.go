@@ -7,7 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/karol-broda/snitch/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/collector"
 )
 
 func (m model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -381,4 +381,3 @@ func (m *model) cycleSort() {
 	m.sortField = collector.SortByLport
 	m.applySorting()
 }
-

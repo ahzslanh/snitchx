@@ -17,7 +17,7 @@ const (
 	SymbolEllipsis   = string('\u2026') // horizontal ellipsis
 	SymbolDownload   = string('\u21E9') // downwards white arrow
 
-	// box drawing rounded 
+	// box drawing rounded
 	BoxTopLeft     = string('\u256D') // light arc down and right
 	BoxTopRight    = string('\u256E') // light arc down and left
 	BoxBottomLeft  = string('\u2570') // light arc up and right
@@ -37,4 +37,3 @@ const (
 	SymbolExport = string('\u21E5') // rightwards arrow to bar
 	SymbolPrompt = string('\u276F') // heavy right-pointing angle quotation mark ornament
 )
-

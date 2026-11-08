@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/karol-broda/snitch/cmd"
+	"github.com/ahzslanh/snitchx/cmd"
 )
 
 func main() {

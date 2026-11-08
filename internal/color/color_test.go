@@ -6,16 +6,16 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/karol-broda/snitch/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/errutil"
 )
 
 func TestInit(t *testing.T) {
 	testCases := []struct {
-		name      string
-		mode      string
-		noColor   string
-		term      string
-		expected  bool
+		name     string
+		mode     string
+		noColor  string
+		term     string
+		expected bool
 	}{
 		{"Always", "always", "", "", false},
 		{"Never", "never", "", "", true},

@@ -1,9 +1,9 @@
 blank_issues_enabled: true
 contact_links:
   - name: Question / Discussion
-    url: https://github.com/karol-broda/snitch/discussions
-    about: Ask questions, share ideas, or discuss snitch usage
+    url: https://github.com/ahzslanh/snitchx/discussions
+    about: Ask questions, share ideas, or discuss snitchx usage
   - name: Documentation
-    url: https://github.com/karol-broda/snitch#readme
+    url: https://github.com/ahzslanh/snitchx#readme
     about: Check the README for usage and configuration docs
 

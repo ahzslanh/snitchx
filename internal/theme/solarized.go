@@ -42,4 +42,3 @@ var paletteSolarizedLight = Palette{
 	Orange:  "#cb4b16",
 	Gray:    "#839496", // base0
 }
-

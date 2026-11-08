@@ -17,17 +17,17 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/errutil"
 )
 
 type StatsData struct {
-	Timestamp time.Time            `json:"ts"`
-	Total     int                  `json:"total"`
-	ByProto   map[string]int       `json:"by_proto"`
-	ByState   map[string]int       `json:"by_state"`
-	ByProc    []ProcessStats       `json:"by_proc"`
-	ByIf      []InterfaceStats     `json:"by_if"`
+	Timestamp time.Time        `json:"ts"`
+	Total     int              `json:"total"`
+	ByProto   map[string]int   `json:"by_proto"`
+	ByState   map[string]int   `json:"by_state"`
+	ByProc    []ProcessStats   `json:"by_proc"`
+	ByIf      []InterfaceStats `json:"by_if"`
 }
 
 type ProcessStats struct {
@@ -55,7 +55,7 @@ var statsCmd = &cobra.Command{
 	Long: `Aggregated connection counters.
 	
 Filters are specified in key=value format. For example:
-  snitch stats proto=tcp state=listening
+  snitchx stats proto=tcp state=listening
 
 Available filters:
   proto, state, pid, proc, lport, rport, user, laddr, raddr, contains

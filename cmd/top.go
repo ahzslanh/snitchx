@@ -4,10 +4,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/ahzslanh/snitchx/internal/config"
+	"github.com/ahzslanh/snitchx/internal/resolver"
+	"github.com/ahzslanh/snitchx/internal/tui"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/karol-broda/snitch/internal/config"
-	"github.com/karol-broda/snitch/internal/resolver"
-	"github.com/karol-broda/snitch/internal/tui"
 	"github.com/spf13/cobra"
 )
 
@@ -65,7 +65,7 @@ func init() {
 	cfg := config.Get()
 
 	// top-specific flags
-	topCmd.Flags().StringVar(&topTheme, "theme", cfg.Defaults.Theme, "Theme for TUI (see 'snitch themes')")
+	topCmd.Flags().StringVar(&topTheme, "theme", cfg.Defaults.Theme, "Theme for TUI (see 'snitchx themes')")
 	topCmd.Flags().DurationVarP(&topInterval, "interval", "i", time.Second, "Refresh interval")
 
 	// shared flags

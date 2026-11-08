@@ -150,4 +150,3 @@ func ParseTimeFilter(timeStr string) (time.Time, time.Duration, error) {
 
 	return time.Time{}, 0, nil // Invalid format, but don't error
 }
-

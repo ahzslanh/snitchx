@@ -25,12 +25,12 @@ func NewMockCollectorFromFile(filename string) (*MockCollector, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	var connections []Connection
 	if err := json.Unmarshal(data, &connections); err != nil {
 		return nil, err
 	}
-	
+
 	return &MockCollector{
 		connections: connections,
 	}, nil
@@ -61,14 +61,14 @@ func (m *MockCollector) SaveToFile(filename string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	return os.WriteFile(filename, data, 0644)
 }
 
 // getDefaultTestConnections returns a set of deterministic test connections
 func getDefaultTestConnections() []Connection {
 	baseTime := time.Date(2025, 1, 15, 10, 30, 0, 0, time.UTC)
-	
+
 	return []Connection{
 		{
 			TS:        baseTime,
@@ -318,7 +318,7 @@ type TestFixture struct {
 // GetTestFixtures returns predefined test fixtures for different scenarios
 func GetTestFixtures() []TestFixture {
 	baseTime := time.Date(2025, 1, 15, 10, 30, 0, 0, time.UTC)
-	
+
 	return []TestFixture{
 		{
 			Name:        "empty",
@@ -386,11 +386,11 @@ func GetTestFixtures() []TestFixture {
 func generateHighVolumeConnections(count int) []Connection {
 	connections := make([]Connection, count)
 	baseTime := time.Date(2025, 1, 15, 10, 30, 0, 0, time.UTC)
-	
+
 	for i := 0; i < count; i++ {
 		connections[i] = NewConnectionBuilder().
-			WithPID(1000 + i).
-			WithProcess("worker-" + string(rune('a'+i%26))).
+			WithPID(1000+i).
+			WithProcess("worker-"+string(rune('a'+i%26))).
 			WithProto([]string{"tcp", "udp"}[i%2]).
 			WithState([]string{"ESTABLISHED", "LISTEN", "TIME_WAIT"}[i%3]).
 			WithLocalAddr("127.0.0.1", 8000+i%1000).
@@ -398,6 +398,6 @@ func generateHighVolumeConnections(count int) []Connection {
 			Build()
 		connections[i].TS = baseTime.Add(time.Duration(i) * time.Millisecond)
 	}
-	
+
 	return connections
 }

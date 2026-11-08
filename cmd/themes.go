@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/karol-broda/snitch/internal/theme"
+	"github.com/ahzslanh/snitchx/internal/theme"
 	"github.com/spf13/cobra"
 )
 
@@ -21,4 +21,3 @@ var themesCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(themesCmd)
 }
-

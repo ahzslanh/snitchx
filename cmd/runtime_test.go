@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/karol-broda/snitch/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/collector"
 )
 
 func TestParseFilterArgs_Empty(t *testing.T) {
@@ -522,4 +522,3 @@ func TestApplyFilter_AllKeys(t *testing.T) {
 		})
 	}
 }
-

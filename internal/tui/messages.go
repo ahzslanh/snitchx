@@ -2,9 +2,8 @@ package tui
 
 import (
 	"fmt"
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/resolver"
-	"syscall"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/resolver"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -65,8 +64,8 @@ func killProcess(pid int, process string) tea.Cmd {
 			}
 		}
 
-		// send SIGTERM first (graceful shutdown)
-		err := syscall.Kill(pid, syscall.SIGTERM)
+		// request a graceful shutdown where the platform supports it
+		err := terminateProcess(pid)
 		if err != nil {
 			return killResultMsg{
 				pid:     pid,
@@ -90,4 +89,3 @@ func clearStatusAfter(d time.Duration) tea.Cmd {
 		return clearStatusMsg{}
 	})
 }
-

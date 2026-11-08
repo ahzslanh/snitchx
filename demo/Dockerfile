@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
 
-# build stage - compile snitch
+# build stage - compile snitchx
 FROM golang:1.25.0-bookworm AS builder
 WORKDIR /src
 COPY . .
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go build -o snitch .
+    go build -o snitchx .
 
 # runtime stage - official vhs image has ffmpeg, chromium, ttyd pre-installed
 FROM ghcr.io/charmbracelet/vhs
@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 WORKDIR /app
 
 # copy built binary from builder
-COPY --from=builder /src/snitch /app/snitch
+COPY --from=builder /src/snitchx /app/snitchx
 
 # copy demo files
 COPY demo/demo.tape /app/demo.tape

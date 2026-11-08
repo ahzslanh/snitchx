@@ -18,8 +18,8 @@ Env CLICOLOR "1"
 Env CLICOLOR_FORCE "1"
 Env FORCE_COLOR "1"
 
-# launch snitch
-Type "./snitch top"
+# launch snitchx
+Type "./snitchx top"
 Enter
 Sleep 1s
 

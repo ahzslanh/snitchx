@@ -1,5 +1,5 @@
 {
-  description = "snitch - a friendlier ss/netstat for humans";
+  description = "snitchx - cross-platform security inspection: network, processes, services, compliance";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
@@ -44,7 +44,7 @@
 
       pkgsFor = system: import nixpkgs { inherit system; };
 
-      mkSnitch = pkgs:
+      mkSnitchX = pkgs:
         let
           rev = self.shortRev or self.dirtyShortRev or "unknown";
           version = "nix-${rev}";
@@ -53,7 +53,7 @@
           buildGoModule = pkgs.buildGoModule.override { inherit go; };
         in
         buildGoModule {
-          pname = "snitch";
+          pname = "snitchx";
           inherit version;
           src = self;
           vendorHash = "sha256-fX3wOqeOgjH7AuWGxPQxJ+wbhp240CW8tiF4rVUUDzk=";
@@ -65,16 +65,16 @@
           ldflags = [
             "-s"
             "-w"
-            "-X snitch/cmd.Version=${version}"
-            "-X snitch/cmd.Commit=${rev}"
-            "-X snitch/cmd.Date=${self.lastModifiedDate or "unknown"}"
+            "-X github.com/ahzslanh/snitchx/cmd.Version=${version}"
+            "-X github.com/ahzslanh/snitchx/cmd.Commit=${rev}"
+            "-X github.com/ahzslanh/snitchx/cmd.Date=${self.lastModifiedDate or "unknown"}"
           ];
           meta = {
-            description = "a friendlier ss/netstat for humans";
-            homepage = "https://github.com/karol-broda/snitch";
+            description = "cross-platform security inspection: network, processes, services, compliance";
+            homepage = "https://github.com/ahzslanh/snitchx";
             license = pkgs.lib.licenses.mit;
             platforms = pkgs.lib.platforms.linux ++ pkgs.lib.platforms.darwin;
-            mainProgram = "snitch";
+            mainProgram = "snitchx";
           };
         };
     in
@@ -82,15 +82,15 @@
       packages = eachSystem (system:
         let
           pkgs = pkgsFor system;
-          snitch = mkSnitch pkgs;
+          snitchx = mkSnitchX pkgs;
           # containers only available on linux
           containers = if pkgs.stdenv.isLinux
-            then import ./nix/containers.nix { inherit pkgs snitch; }
+            then import ./nix/containers.nix { inherit pkgs snitchx; }
             else { };
         in
         {
-          default = snitch;
-          inherit snitch;
+          default = snitchx;
+          inherit snitchx;
         } // containers
       );
 
@@ -111,15 +111,15 @@
       );
 
       overlays.default = final: _prev: {
-        snitch = mkSnitch final;
+        snitchx = mkSnitchX final;
       };
 
       homeManagerModules.default = import ./nix/hm-module.nix;
-      homeManagerModules.snitch = self.homeManagerModules.default;
+      homeManagerModules.snitchx = self.homeManagerModules.default;
 
       # alias for flake-parts compatibility
       homeModules.default = self.homeManagerModules.default;
-      homeModules.snitch = self.homeManagerModules.default;
+      homeModules.snitchx = self.homeManagerModules.default;
 
       checks = eachSystem (system:
         let

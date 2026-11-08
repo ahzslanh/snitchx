@@ -10,14 +10,14 @@ import (
 	"time"
 )
 
-var debugTiming = os.Getenv("SNITCH_DEBUG_TIMING") != ""
+var debugTiming = os.Getenv("SNITCHX_DEBUG_TIMING") != ""
 
 // Resolver handles DNS and service name resolution with caching and timeouts
 type Resolver struct {
-	timeout  time.Duration
-	cache    map[string]string
-	mutex    sync.RWMutex
-	noCache  bool
+	timeout time.Duration
+	cache   map[string]string
+	mutex   sync.RWMutex
+	noCache bool
 }
 
 // New creates a new resolver with the specified timeout

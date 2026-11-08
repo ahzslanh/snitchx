@@ -1,4 +1,4 @@
-# oci container definitions for snitch
+# oci container definitions for snitchx
 # builds containers based on different base images: alpine, debian trixie, ubuntu
 #
 # base images are pinned by imageDigest (immutable content hash), not by tag.
@@ -10,18 +10,18 @@
 #   nix-prefetch-docker --image-name ubuntu --image-tag 24.04
 #
 # this outputs both imageDigest and sha256 values needed below
-{ pkgs, snitch }:
+{ pkgs, snitchx }:
 let
   commonConfig = {
-    name = "snitch";
-    tag = snitch.version;
+    name = "snitchx";
+    tag = snitchx.version;
     config = {
-      Entrypoint = [ "${snitch}/bin/snitch" ];
+      Entrypoint = [ "${snitchx}/bin/snitchx" ];
       Env = [ "PATH=/bin" ];
       Labels = {
-        "org.opencontainers.image.title" = "snitch";
-        "org.opencontainers.image.description" = "a friendlier ss/netstat for humans";
-        "org.opencontainers.image.source" = "https://github.com/karol-broda/snitch";
+        "org.opencontainers.image.title" = "snitchx";
+        "org.opencontainers.image.description" = "cross-platform security inspection: network, processes, services, compliance";
+        "org.opencontainers.image.source" = "https://github.com/ahzslanh/snitchx";
         "org.opencontainers.image.licenses" = "MIT";
       };
     };
@@ -54,13 +54,13 @@ let
     finalImageTag = "24.04";
   };
 
-  # scratch container (minimal, just the snitch binary)
+  # scratch container (minimal, just the snitchx binary)
   scratch = pkgs.dockerTools.buildImage {
-    name = "snitch";
-    tag = "${snitch.version}-scratch";
+    name = "snitchx";
+    tag = "${snitchx.version}-scratch";
     copyToRoot = pkgs.buildEnv {
-      name = "snitch-root";
-      paths = [ snitch ];
+      name = "snitchx-root";
+      paths = [ snitchx ];
       pathsToLink = [ "/bin" ];
     };
     config = commonConfig.config;
@@ -68,51 +68,51 @@ let
 
 in
 {
-  snitch-alpine = pkgs.dockerTools.buildImage {
-    name = "snitch";
-    tag = "${snitch.version}-alpine";
+  snitchx-alpine = pkgs.dockerTools.buildImage {
+    name = "snitchx";
+    tag = "${snitchx.version}-alpine";
     fromImage = alpine;
     copyToRoot = pkgs.buildEnv {
-      name = "snitch-root";
-      paths = [ snitch ];
+      name = "snitchx-root";
+      paths = [ snitchx ];
       pathsToLink = [ "/bin" ];
     };
     config = commonConfig.config;
   };
 
-  snitch-debian = pkgs.dockerTools.buildImage {
-    name = "snitch";
-    tag = "${snitch.version}-debian";
+  snitchx-debian = pkgs.dockerTools.buildImage {
+    name = "snitchx";
+    tag = "${snitchx.version}-debian";
     fromImage = debianTrixie;
     copyToRoot = pkgs.buildEnv {
-      name = "snitch-root";
-      paths = [ snitch ];
+      name = "snitchx-root";
+      paths = [ snitchx ];
       pathsToLink = [ "/bin" ];
     };
     config = commonConfig.config;
   };
 
-  snitch-ubuntu = pkgs.dockerTools.buildImage {
-    name = "snitch";
-    tag = "${snitch.version}-ubuntu";
+  snitchx-ubuntu = pkgs.dockerTools.buildImage {
+    name = "snitchx";
+    tag = "${snitchx.version}-ubuntu";
     fromImage = ubuntu;
     copyToRoot = pkgs.buildEnv {
-      name = "snitch-root";
-      paths = [ snitch ];
+      name = "snitchx-root";
+      paths = [ snitchx ];
       pathsToLink = [ "/bin" ];
     };
     config = commonConfig.config;
   };
 
-  snitch-scratch = scratch;
+  snitchx-scratch = scratch;
 
   oci-default = pkgs.dockerTools.buildImage {
-    name = "snitch";
-    tag = snitch.version;
+    name = "snitchx";
+    tag = snitchx.version;
     fromImage = alpine;
     copyToRoot = pkgs.buildEnv {
-      name = "snitch-root";
-      paths = [ snitch ];
+      name = "snitchx-root";
+      paths = [ snitchx ];
       pathsToLink = [ "/bin" ];
     };
     config = commonConfig.config;

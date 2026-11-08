@@ -1,8 +1,8 @@
 package tui
 
 import (
+	"github.com/ahzslanh/snitchx/internal/collector"
 	"regexp"
-	"github.com/karol-broda/snitch/internal/collector"
 	"strings"
 )
 
@@ -46,4 +46,3 @@ func sortFieldLabel(f collector.SortField) string {
 		return "port"
 	}
 }
-

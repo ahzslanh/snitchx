@@ -28,7 +28,6 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUR_KEY: ${{ secrets.AUR_KEY }}
 
   release-darwin:
     needs: release-linux
@@ -84,12 +83,12 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: build container
-        run: nix build ".#snitch-${{ matrix.variant }}" --print-out-paths
+        run: nix build ".#snitchx-${{ matrix.variant }}" --print-out-paths
 
       - name: load and push container
         env:
           VERSION: ${{ github.ref_name }}
-          REPO: ghcr.io/${{ github.repository_owner }}/snitch
+          REPO: ghcr.io/${{ github.repository_owner }}/snitchx
           VARIANT: ${{ matrix.variant }}
           IS_DEFAULT: ${{ matrix.is_default }}
         run: |
@@ -97,7 +96,7 @@ jobs:
 
           docker load < result
 
-          IMAGE_TAG=$(docker images --format '{{.Repository}}:{{.Tag}}' | grep "snitch:.*-${VARIANT}" | head -1)
+          IMAGE_TAG=$(docker images --format '{{.Repository}}:{{.Tag}}' | grep "snitchx:.*-${VARIANT}" | head -1)
 
           if [ -z "$IMAGE_TAG" ]; then
             echo "error: could not find loaded image for ${VARIANT}"
@@ -119,7 +118,7 @@ jobs:
       - name: summary
         env:
           VERSION: ${{ github.ref_name }}
-          REPO: ghcr.io/${{ github.repository_owner }}/snitch
+          REPO: ghcr.io/${{ github.repository_owner }}/snitchx
           VARIANT: ${{ matrix.variant }}
         run: |
           VERSION="${VERSION#v}"

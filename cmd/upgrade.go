@@ -18,14 +18,14 @@ import (
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 
-	"github.com/karol-broda/snitch/internal/errutil"
-	"github.com/karol-broda/snitch/internal/tui"
+	"github.com/ahzslanh/snitchx/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/tui"
 )
 
 const (
-	repoOwner = "karol-broda"
-	repoName  = "snitch"
-	githubAPI = "https://api.github.com"
+	repoOwner           = "ahzslanh"
+	repoName            = "snitchx"
+	githubAPI           = "https://api.github.com"
 	firstUpgradeVersion = "0.1.8"
 )
 
@@ -36,7 +36,7 @@ var (
 
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
-	Short: "Check for updates and optionally upgrade snitch",
+	Short: "Check for updates and optionally upgrade snitchx",
 	Long: `Check for available updates and show upgrade instructions.
 
 Use --yes to perform an in-place upgrade automatically.
@@ -60,10 +60,10 @@ type githubCommit struct {
 }
 
 type githubCompare struct {
-	Status      string `json:"status"`
-	AheadBy     int    `json:"ahead_by"`
-	BehindBy    int    `json:"behind_by"`
-	TotalCommits int   `json:"total_commits"`
+	Status       string `json:"status"`
+	AheadBy      int    `json:"ahead_by"`
+	BehindBy     int    `json:"behind_by"`
+	TotalCommits int    `json:"total_commits"`
 }
 
 func runUpgrade(cmd *cobra.Command, args []string) error {
@@ -118,7 +118,7 @@ func runUpgrade(cmd *cobra.Command, args []string) error {
 		faint := color.New(color.Faint)
 		cmdStyle := color.New(color.FgCyan)
 		errutil.Print(faint, "  in-place      ")
-		errutil.Println(cmdStyle, "snitch upgrade --yes")
+		errutil.Println(cmdStyle, "snitchx upgrade --yes")
 		return nil
 	}
 
@@ -161,7 +161,7 @@ func handleSpecificVersion(current, target string) error {
 		}
 		fmt.Println()
 		errutil.Print(faint, "run ")
-		errutil.Printf(cmdStyle, "snitch upgrade --version %s --yes", target)
+		errutil.Printf(cmdStyle, "snitchx upgrade --version %s --yes", target)
 		errutil.Println(faint, " to proceed")
 		return nil
 	}
@@ -385,11 +385,14 @@ func printUpgradeInstructions() {
 	errutil.Print(faint, "  go install    ")
 	errutil.Printf(cmd, "go install github.com/%s/%s@latest\n", repoOwner, repoName)
 
+	if runtime.GOOS == "windows" {
+		errutil.Print(faint, "  powershell    ")
+		errutil.Printf(cmd, "irm https://raw.githubusercontent.com/%s/%s/master/install.ps1 | iex\n", repoOwner, repoName)
+		return
+	}
+
 	errutil.Print(faint, "  shell script  ")
 	errutil.Printf(cmd, "curl -sSL https://raw.githubusercontent.com/%s/%s/master/install.sh | sh\n", repoOwner, repoName)
-
-	errutil.Print(faint, "  arch (aur)    ")
-	errutil.Println(cmd, "yay -S snitch-bin")
 
 	errutil.Print(faint, "  nix           ")
 	errutil.Printf(cmd, "nix profile upgrade --inputs-from github:%s/%s\n", repoOwner, repoName)
@@ -417,8 +420,7 @@ func performUpgrade(version string) error {
 	goos := runtime.GOOS
 	goarch := runtime.GOARCH
 
-	versionClean := strings.TrimPrefix(version, "v")
-	archiveName := fmt.Sprintf("%s_%s_%s_%s.tar.gz", repoName, versionClean, goos, goarch)
+	archiveName := releaseArchiveName(version, goos, goarch)
 	downloadURL := fmt.Sprintf("https://github.com/%s/%s/releases/download/%s/%s",
 		repoOwner, repoName, version, archiveName)
 
@@ -438,7 +440,7 @@ func performUpgrade(version string) error {
 		return fmt.Errorf("download failed with status %d", resp.StatusCode)
 	}
 
-	tmpDir, err := os.MkdirTemp("", "snitch-upgrade-*")
+	tmpDir, err := os.MkdirTemp("", "snitchx-upgrade-*")
 	if err != nil {
 		return fmt.Errorf("failed to create temp directory: %w", err)
 	}
@@ -461,38 +463,29 @@ func performUpgrade(version string) error {
 
 		errutil.Printf(yellow, tui.SymbolWarning+" elevated permissions required to install to %s\n", targetDir)
 		fmt.Println()
-		errutil.Println(faint, "run with sudo or install to a user-writable location:")
-		fmt.Println()
-		errutil.Print(faint, "  sudo         ")
-		errutil.Println(cmdStyle, "sudo snitch upgrade --yes")
-		errutil.Print(faint, "  custom dir   ")
-		errutil.Printf(cmdStyle, "curl -sSL https://raw.githubusercontent.com/%s/%s/master/install.sh | INSTALL_DIR=~/.local/bin sh\n",
-			repoOwner, repoName)
+		if runtime.GOOS == "windows" {
+			errutil.Println(faint, "run this from an elevated (Administrator) terminal:")
+			fmt.Println()
+			errutil.Print(faint, "  admin        ")
+			errutil.Println(cmdStyle, "snitchx upgrade --yes")
+			errutil.Print(faint, "  custom dir   ")
+			errutil.Printf(cmdStyle, "powershell -c \"irm https://raw.githubusercontent.com/%s/%s/master/install.ps1 | iex\"\n",
+				repoOwner, repoName)
+		} else {
+			errutil.Println(faint, "run with sudo or install to a user-writable location:")
+			fmt.Println()
+			errutil.Print(faint, "  sudo         ")
+			errutil.Println(cmdStyle, "sudo snitchx upgrade --yes")
+			errutil.Print(faint, "  custom dir   ")
+			errutil.Printf(cmdStyle, "curl -sSL https://raw.githubusercontent.com/%s/%s/master/install.sh | INSTALL_DIR=~/.local/bin sh\n",
+				repoOwner, repoName)
+		}
 		return nil
 	}
 
-	// replace the binary
-	backupPath := execPath + ".bak"
-	if err := os.Rename(execPath, backupPath); err != nil {
-		return fmt.Errorf("failed to backup current binary: %w", err)
-	}
-
-	if err := copyFile(binaryPath, execPath); err != nil {
-		// try to restore backup
-		if restoreErr := os.Rename(backupPath, execPath); restoreErr != nil {
-			return fmt.Errorf("failed to install new binary and restore backup: %w (restore error: %v)", err, restoreErr)
-		}
-		return fmt.Errorf("failed to install new binary: %w", err)
-	}
-
-	if err := os.Chmod(execPath, 0755); err != nil {
-		return fmt.Errorf("failed to set executable permissions: %w", err)
-	}
-
-	if err := os.Remove(backupPath); err != nil {
-		// non-fatal, just warn
-		yellow := color.New(color.FgYellow)
-		errutil.Fprintf(yellow, os.Stderr, tui.SymbolWarning+" warning: failed to remove backup file %s: %v\n", backupPath, err)
+	// replace the binary, keeping a backup until the new one is in place
+	if err := installBinary(binaryPath, execPath); err != nil {
+		return err
 	}
 
 	green := color.New(color.FgGreen, color.Bold)
@@ -500,7 +493,51 @@ func performUpgrade(version string) error {
 	return nil
 }
 
+// releaseBinaryName returns the executable name inside a release archive.
+func releaseBinaryName(goos string) string {
+	if goos == "windows" {
+		return repoName + ".exe"
+	}
+	return repoName
+}
+
+// releaseArchiveName must match the archives.name_template in .goreleaser.yaml.
+func releaseArchiveName(version, goos, goarch string) string {
+	return fmt.Sprintf("%s_%s_%s_%s.tar.gz", repoName, strings.TrimPrefix(version, "v"), goos, goarch)
+}
+
+// installBinary replaces dst with src, restoring the original on failure.
+func installBinary(src, dst string) error {
+	backupPath := dst + ".bak"
+	_ = os.Remove(backupPath)
+
+	if err := os.Rename(dst, backupPath); err != nil {
+		return fmt.Errorf("failed to backup current binary: %w", err)
+	}
+
+	if err := copyFile(src, dst); err != nil {
+		_ = os.Remove(dst)
+		if restoreErr := os.Rename(backupPath, dst); restoreErr != nil {
+			return fmt.Errorf("failed to install new binary and restore backup: %w (restore error: %v)", err, restoreErr)
+		}
+		return fmt.Errorf("failed to install new binary: %w", err)
+	}
+
+	if err := os.Chmod(dst, 0755); err != nil {
+		return fmt.Errorf("failed to set executable permissions: %w", err)
+	}
+
+	// non-fatal: a locked backup (e.g. an old process still running) can be
+	// removed on the next upgrade.
+	_ = os.Remove(backupPath)
+	return nil
+}
+
 func extractBinaryFromTarGz(r io.Reader, destDir string) (string, error) {
+	return extractBinaryFromTarGzNamed(r, destDir, releaseBinaryName(runtime.GOOS))
+}
+
+func extractBinaryFromTarGzNamed(r io.Reader, destDir, expectedName string) (string, error) {
 	gzr, err := gzip.NewReader(r)
 	if err != nil {
 		return "", err
@@ -522,13 +559,13 @@ func extractBinaryFromTarGz(r io.Reader, destDir string) (string, error) {
 			continue
 		}
 
-		// look for the snitch binary
+		// look for the snitchx binary (snitchx.exe on Windows)
 		name := filepath.Base(header.Name)
-		if name != repoName {
+		if name != expectedName {
 			continue
 		}
 
-		destPath := filepath.Join(destDir, name)
+		destPath := filepath.Join(destDir, expectedName)
 		outFile, err := os.Create(destPath)
 		if err != nil {
 			return "", err
@@ -547,7 +584,7 @@ func extractBinaryFromTarGz(r io.Reader, destDir string) (string, error) {
 }
 
 func isWritable(path string) bool {
-	testFile := filepath.Join(path, ".snitch-write-test")
+	testFile := filepath.Join(path, ".snitchx-write-test")
 	f, err := os.Create(testFile)
 	if err != nil {
 		return false
@@ -681,9 +718,8 @@ func printNixUpgradeInstructions() {
 	errutil.Printf(cmd, "nix profile install github:%s/%s\n", repoOwner, repoName)
 
 	errutil.Print(faint, "  flake update    ")
-	errutil.Println(cmd, "nix flake update snitch  (in your system/home-manager config)")
+	errutil.Println(cmd, "nix flake update snitchx  (in your system/home-manager config)")
 
 	errutil.Print(faint, "  rebuild         ")
 	errutil.Println(cmd, "nixos-rebuild switch  or  home-manager switch")
 }
-

@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/errutil"
 )
 
 // TestCollector wraps MockCollector for use in tests
@@ -31,7 +31,7 @@ func NewTestCollectorWithFixture(fixtureName string) *TestCollector {
 			return &TestCollector{MockCollector: mock}
 		}
 	}
-	
+
 	// Fallback to default if fixture not found
 	return NewTestCollector()
 }
@@ -39,24 +39,24 @@ func NewTestCollectorWithFixture(fixtureName string) *TestCollector {
 // SetupTestEnvironment sets up a clean test environment
 func SetupTestEnvironment(t *testing.T) (string, func()) {
 	// Create temporary directory for test files
-	tempDir, err := os.MkdirTemp("", "snitch-test-*")
+	tempDir, err := os.MkdirTemp("", "snitchx-test-*")
 	if err != nil {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
-	
+
 	// Set test environment variables
-	oldConfig := os.Getenv("SNITCH_CONFIG")
-	oldNoColor := os.Getenv("SNITCH_NO_COLOR")
-	
-	errutil.Setenv("SNITCH_NO_COLOR", "1")
-	
+	oldConfig := os.Getenv("SNITCHX_CONFIG")
+	oldNoColor := os.Getenv("SNITCHX_NO_COLOR")
+
+	errutil.Setenv("SNITCHX_NO_COLOR", "1")
+
 	// Cleanup function
 	cleanup := func() {
 		errutil.RemoveAll(tempDir)
-		errutil.Setenv("SNITCH_CONFIG", oldConfig)
-		errutil.Setenv("SNITCH_NO_COLOR", oldNoColor)
+		errutil.Setenv("SNITCHX_CONFIG", oldConfig)
+		errutil.Setenv("SNITCHX_NO_COLOR", oldNoColor)
 	}
-	
+
 	return tempDir, cleanup
 }
 
@@ -64,12 +64,12 @@ func SetupTestEnvironment(t *testing.T) (string, func()) {
 func CreateFixtureFile(t *testing.T, dir string, name string, connections []collector.Connection) string {
 	mock := collector.NewMockCollector()
 	mock.SetConnections(connections)
-	
+
 	filePath := filepath.Join(dir, name+".json")
 	if err := mock.SaveToFile(filePath); err != nil {
 		t.Fatalf("Failed to create fixture file %s: %v", filePath, err)
 	}
-	
+
 	return filePath
 }
 
@@ -79,12 +79,12 @@ func LoadFixtureFile(t *testing.T, filePath string) []collector.Connection {
 	if err != nil {
 		t.Fatalf("Failed to load fixture file %s: %v", filePath, err)
 	}
-	
+
 	connections, err := mock.GetConnections()
 	if err != nil {
 		t.Fatalf("Failed to get connections from fixture: %v", err)
 	}
-	
+
 	return connections
 }
 
@@ -94,10 +94,10 @@ func AssertConnectionsEqual(t *testing.T, expected, actual []collector.Connectio
 		t.Errorf("Connection count mismatch: expected %d, got %d", len(expected), len(actual))
 		return
 	}
-	
+
 	for i, exp := range expected {
 		act := actual[i]
-		
+
 		// Compare key fields (timestamps may vary slightly)
 		if exp.PID != act.PID {
 			t.Errorf("Connection %d PID mismatch: expected %d, got %d", i, exp.PID, act.PID)
@@ -142,34 +142,34 @@ func GetTestConfig() map[string]interface{} {
 
 // CaptureOutput captures stdout/stderr during test execution
 type OutputCapture struct {
-	stdout *os.File
-	stderr *os.File
-	oldStdout *os.File
-	oldStderr *os.File
+	stdout     *os.File
+	stderr     *os.File
+	oldStdout  *os.File
+	oldStderr  *os.File
 	stdoutFile string
 	stderrFile string
 }
 
 // NewOutputCapture creates a new output capture
 func NewOutputCapture(t *testing.T) *OutputCapture {
-	tempDir, err := os.MkdirTemp("", "snitch-output-*")
+	tempDir, err := os.MkdirTemp("", "snitchx-output-*")
 	if err != nil {
 		t.Fatalf("Failed to create temp dir for output capture: %v", err)
 	}
-	
+
 	stdoutFile := filepath.Join(tempDir, "stdout")
 	stderrFile := filepath.Join(tempDir, "stderr")
-	
+
 	stdout, err := os.Create(stdoutFile)
 	if err != nil {
 		t.Fatalf("Failed to create stdout file: %v", err)
 	}
-	
+
 	stderr, err := os.Create(stderrFile)
 	if err != nil {
 		t.Fatalf("Failed to create stderr file: %v", err)
 	}
-	
+
 	return &OutputCapture{
 		stdout:     stdout,
 		stderr:     stderr,
@@ -191,26 +191,26 @@ func (oc *OutputCapture) Stop() (string, string, error) {
 	// Restore original stdout/stderr
 	os.Stdout = oc.oldStdout
 	os.Stderr = oc.oldStderr
-	
+
 	// Close files
 	errutil.Close(oc.stdout)
 	errutil.Close(oc.stderr)
-	
+
 	// Read captured content
 	stdoutContent, err := os.ReadFile(oc.stdoutFile)
 	if err != nil {
 		return "", "", err
 	}
-	
+
 	stderrContent, err := os.ReadFile(oc.stderrFile)
 	if err != nil {
 		return "", "", err
 	}
-	
+
 	// Cleanup
 	errutil.Remove(oc.stdoutFile)
 	errutil.Remove(oc.stderrFile)
 	errutil.Remove(filepath.Dir(oc.stdoutFile))
-	
+
 	return string(stdoutContent), string(stderrContent), nil
 }

@@ -9,20 +9,20 @@ import (
 type SortField string
 
 const (
-	SortByPID        SortField = "pid"
-	SortByProcess    SortField = "process"
-	SortByUser       SortField = "user"
-	SortByProto      SortField = "proto"
-	SortByState      SortField = "state"
-	SortByLaddr      SortField = "laddr"
-	SortByLport      SortField = "lport"
-	SortByRaddr      SortField = "raddr"
-	SortByRport      SortField = "rport"
-	SortByInterface  SortField = "if"
-	SortByRxBytes    SortField = "rx_bytes"
-	SortByTxBytes    SortField = "tx_bytes"
-	SortByRttMs      SortField = "rtt_ms"
-	SortByTimestamp  SortField = "ts"
+	SortByPID       SortField = "pid"
+	SortByProcess   SortField = "process"
+	SortByUser      SortField = "user"
+	SortByProto     SortField = "proto"
+	SortByState     SortField = "state"
+	SortByLaddr     SortField = "laddr"
+	SortByLport     SortField = "lport"
+	SortByRaddr     SortField = "raddr"
+	SortByRport     SortField = "rport"
+	SortByInterface SortField = "if"
+	SortByRxBytes   SortField = "rx_bytes"
+	SortByTxBytes   SortField = "tx_bytes"
+	SortByRttMs     SortField = "rtt_ms"
+	SortByTimestamp SortField = "ts"
 )
 
 // SortDirection represents ascending or descending order
@@ -129,4 +129,3 @@ func stateOrder(state string) int {
 	}
 	return 99
 }
-

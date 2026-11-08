@@ -63,4 +63,3 @@ var paletteTokyoNightLight = Palette{
 	Orange:  "#965027",
 	Gray:    "#9699a3", // comment
 }
-

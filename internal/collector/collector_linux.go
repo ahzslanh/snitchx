@@ -15,11 +15,11 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/karol-broda/snitch/internal/errutil"
+	"github.com/ahzslanh/snitchx/internal/errutil"
 )
 
-// set SNITCH_DEBUG_TIMING=1 to enable timing diagnostics
-var debugTiming = os.Getenv("SNITCH_DEBUG_TIMING") != ""
+// set SNITCHX_DEBUG_TIMING=1 to enable timing diagnostics
+var debugTiming = os.Getenv("SNITCHX_DEBUG_TIMING") != ""
 
 func logTiming(label string, start time.Time, extra ...string) {
 	if !debugTiming {
@@ -523,4 +523,3 @@ func GetUnixSockets() ([]Connection, error) {
 
 	return connections, nil
 }
-

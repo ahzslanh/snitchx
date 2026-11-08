@@ -1,71 +1,100 @@
-# snitch
+# snitchX
 
-a friendlier `ss` / `netstat` for humans. inspect network connections with a clean tui or styled tables.
+**Network. Processes. Services. Compliance.**
 
-![snitch demo](demo/demo.gif)
+snitchX is a cross-platform security inspection tool. It shows which processes
+own which network endpoints, and extends that into service, startup, and
+compliance inspection.
+
+snitchX is a fork of [karol-broda/snitch](https://github.com/karol-broda/snitch),
+released under the MIT license.
+
+![snitchX demo](demo/demo.gif)
+
+## platform support
+
+| platform | endpoint inspection | process mapping | services / startup | compliance |
+|----------|--------------------|-----------------|--------------------|------------|
+| macOS    | libproc            | yes             | roadmap            | roadmap    |
+| Linux    | `/proc/net/*`      | yes             | roadmap            | roadmap    |
+| Windows  | iphlpapi           | yes             | in progress        | roadmap    |
 
 ## install
 
-### homebrew
+### Windows (PowerShell)
 
-```bash
-brew install snitch
+```powershell
+irm https://raw.githubusercontent.com/ahzslanh/snitchx/master/install.ps1 | iex
 ```
 
-> thanks to [@bevanjkay](https://github.com/bevanjkay) for adding snitch to homebrew-core
+The installer detects OS/architecture, an existing installation and its
+version, and whether the current shell is elevated. Without elevation it
+installs per-user to `%LOCALAPPDATA%\Programs\snitchX`; from an elevated
+terminal it installs machine-wide to `%ProgramFiles%\snitchX`.
+
+Or download the release archive and run `snitchx.exe`:
+
+- `snitchx_<version>_windows_amd64.tar.gz`
+- `snitchx_<version>_windows_arm64.tar.gz`
+
+### macOS / Linux (shell script)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/ahzslanh/snitchx/master/install.sh | sh
+```
+
+Installs to `~/.local/bin` when it is on `PATH`, otherwise `/usr/local/bin`.
+Override with:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/ahzslanh/snitchx/master/install.sh | INSTALL_DIR=~/bin sh
+```
+
+> **macOS:** the install script removes the `com.apple.quarantine` attribute so
+> the binary can run without Gatekeeper warnings. Set `KEEP_QUARANTINE=1` to
+> disable this.
 
 ### go
 
 ```bash
-go install github.com/karol-broda/snitch@latest
+go install github.com/ahzslanh/snitchx@latest
 ```
 
-### nixpkgs
-
-```bash
-nix-env -iA nixpkgs.snitch
-```
-
-> thanks to [@DieracDelta](https://github.com/DieracDelta) for adding snitch to nixpkgs
-
-### nixos / nix (flake)
+### nix
 
 ```bash
 # try it
-nix run github:karol-broda/snitch
+nix run github:ahzslanh/snitchx
 
 # install to profile
-nix profile install github:karol-broda/snitch
-
-# or add to flake inputs
-{
-  inputs.snitch.url = "github:karol-broda/snitch";
-}
-# then use: inputs.snitch.packages.${system}.default
+nix profile install github:ahzslanh/snitchx
 ```
 
-### home-manager (flake)
+```nix
+{
+  inputs.snitchx.url = "github:ahzslanh/snitchx";
+}
+# then use: inputs.snitchx.packages.${system}.default
+```
 
-add snitch to your flake inputs and import the home-manager module:
+### home-manager
 
 ```nix
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
-    snitch.url = "github:karol-broda/snitch";
+    snitchx.url = "github:ahzslanh/snitchx";
   };
 
-  outputs = { nixpkgs, home-manager, snitch, ... }: {
+  outputs = { nixpkgs, home-manager, snitchx, ... }: {
     homeConfigurations."user" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       modules = [
-        snitch.homeManagerModules.default
+        snitchx.homeManagerModules.default
         {
-          programs.snitch = {
+          programs.snitchx = {
             enable = true;
-            # optional: use the flake's package instead of nixpkgs
-            # package = snitch.packages.x86_64-linux.default;
             settings = {
               defaults = {
                 theme = "catppuccin-mocha";
@@ -81,180 +110,132 @@ add snitch to your flake inputs and import the home-manager module:
 }
 ```
 
-available themes: `ansi`, `catppuccin-mocha`, `catppuccin-macchiato`, `catppuccin-frappe`, `catppuccin-latte`, `gruvbox-dark`, `gruvbox-light`, `dracula`, `nord`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`, `solarized-dark`, `solarized-light`, `one-dark`, `mono`
+### binary releases
 
-### arch linux (aur)
+Download from [releases](https://github.com/ahzslanh/snitchx/releases):
 
-```bash
-# with yay
-yay -S snitch-bin
-
-# with paru
-paru -S snitch-bin
-```
-
-### shell script
+- **Windows:** `snitchx_<version>_windows_<arch>.tar.gz` (contains `snitchx.exe`)
+- **Linux:** `snitchx_<version>_linux_<arch>.tar.gz` or `.deb` / `.rpm` / `.apk`
+- **macOS:** `snitchx_<version>_darwin_<arch>.tar.gz`
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/karol-broda/snitch/master/install.sh | sh
+tar xzf snitchx_*.tar.gz
+sudo mv snitchx /usr/local/bin/
 ```
 
-installs to `~/.local/bin` if available, otherwise `/usr/local/bin`. override with:
-
-```bash
-curl -sSL https://raw.githubusercontent.com/karol-broda/snitch/master/install.sh | INSTALL_DIR=~/bin sh
-```
-
-> **macos:** the install script automatically removes the quarantine attribute (`com.apple.quarantine`) from the binary to allow it to run without gatekeeper warnings. to disable this, set `KEEP_QUARANTINE=1`.
-
-### docker
-
-pre-built oci images available from github container registry:
-
-```bash
-# pull from ghcr.io
-docker pull ghcr.io/karol-broda/snitch:latest          # alpine (default)
-docker pull ghcr.io/karol-broda/snitch:latest-alpine   # alpine (~17MB)
-docker pull ghcr.io/karol-broda/snitch:latest-scratch  # minimal, binary only (~9MB)
-docker pull ghcr.io/karol-broda/snitch:latest-debian   # debian trixie
-docker pull ghcr.io/karol-broda/snitch:latest-ubuntu   # ubuntu 24.04
-
-# or use a specific version
-docker pull ghcr.io/karol-broda/snitch:0.2.0-alpine
-```
-
-alternatively, build locally via nix flake:
-
-```bash
-nix build github:karol-broda/snitch#snitch-alpine
-docker load < result
-```
-
-**running the container:**
-
-```bash
-# basic usage - sees host sockets but not process names
-docker run --rm --net=host snitch:latest ls
-
-# full info - includes PID, process name, user
-docker run --rm --net=host --pid=host --cap-add=SYS_PTRACE snitch:latest ls
-```
-
-| flag | purpose |
-|------|---------|
-| `--net=host` | share host network namespace (required to see host connections) |
-| `--pid=host` | share host pid namespace (needed for process info) |
-| `--cap-add=SYS_PTRACE` | read process details from `/proc/<pid>` |
-
-> **note:** `CAP_NET_ADMIN` and `CAP_NET_RAW` are not required. snitch reads from `/proc/net/*` which doesn't need special network capabilities.
-
-### binary
-
-download from [releases](https://github.com/karol-broda/snitch/releases):
-
-- **linux:** `snitch_<version>_linux_<arch>.tar.gz` or `.deb`/`.rpm`/`.apk`
-- **macos:** `snitch_<version>_darwin_<arch>.tar.gz`
-
-```bash
-tar xzf snitch_*.tar.gz
-sudo mv snitch /usr/local/bin/
-```
-
-> **macos:** if blocked with "cannot be opened because the developer cannot be verified", run:
+> **macOS:** if macOS blocks the binary, run:
 >
 > ```bash
-> xattr -d com.apple.quarantine /usr/local/bin/snitch
+> xattr -d com.apple.quarantine /usr/local/bin/snitchx
 > ```
 
 ## quick start
 
 ```bash
-snitch              # launch interactive tui
-snitch -l           # tui showing only listening sockets
-snitch ls           # print styled table and exit
-snitch ls -l        # listening sockets only
-snitch ls -t -e     # tcp established connections
-snitch ls -p        # plain output (parsable)
+snitchx              # launch interactive tui
+snitchx -l           # tui showing only listening sockets
+snitchx ls           # print styled table and exit
+snitchx ls -l        # listening sockets only
+snitchx ls -t -e     # tcp established connections
+snitchx ls -p        # plain output (parsable)
+snitchx json         # json output for scripting
 ```
 
 ## commands
 
-### `snitch` / `snitch top`
+### `snitchx` / `snitchx top`
 
-interactive tui with live-updating connection list.
+Interactive TUI with a live-updating connection list.
 
 ```bash
-snitch                  # all connections
-snitch -l               # listening only
-snitch -t               # tcp only
-snitch -e               # established only
-snitch -i 2s            # 2 second refresh interval
+snitchx                  # all connections
+snitchx -l               # listening only
+snitchx -t               # tcp only
+snitchx -e               # established only
+snitchx -i 2s            # 2 second refresh interval
 ```
 
 **keybindings:**
 
 ```
-j/k, ↑/↓      navigate
+j/k, arrows   navigate
 g/G           top/bottom
 t/u           toggle tcp/udp
 l/e/o         toggle listen/established/other
 s/S           cycle sort / reverse
 w             watch/monitor process (highlight)
 W             clear all watched
-K             kill process (with confirmation)
+K             terminate process (with confirmation)
 /             search
 enter         connection details
 ?             help
 q             quit
 ```
 
-### `snitch ls`
+### `snitchx ls`
 
-one-shot table output. uses a pager automatically if output exceeds terminal height.
+One-shot table output. Uses a pager automatically if output exceeds terminal height.
 
 ```bash
-snitch ls               # styled table (default)
-snitch ls -l            # listening only
-snitch ls -t -l         # tcp listeners
-snitch ls -e            # established only
-snitch ls -p            # plain/parsable output
-snitch ls -o json       # json output
-snitch ls -o csv        # csv output
-snitch ls -n            # numeric (no dns resolution)
-snitch ls --no-headers  # omit headers
+snitchx ls               # styled table (default)
+snitchx ls -l            # listening only
+snitchx ls -t -l         # tcp listeners
+snitchx ls -e            # established only
+snitchx ls -p            # plain/parsable output
+snitchx ls -o json       # json output
+snitchx ls -o csv        # csv output
+snitchx ls -n            # numeric (no dns resolution)
+snitchx ls --no-headers  # omit headers
 ```
 
-### `snitch json`
+### `snitchx json`
 
-json output for scripting.
+JSON output for scripting.
 
 ```bash
-snitch json
-snitch json -l
+snitchx json
+snitchx json -l
 ```
 
-### `snitch watch`
+### `snitchx stats`
 
-stream json frames at an interval.
+Aggregated connection counters.
 
 ```bash
-snitch watch -i 1s | jq '.count'
-snitch watch -l -i 500ms
+snitchx stats
+snitchx stats proto=tcp
 ```
 
-### `snitch upgrade`
+### `snitchx watch`
 
-check for updates and upgrade in-place.
+Stream JSON frames at an interval.
 
 ```bash
-snitch upgrade              # check for updates
-snitch upgrade --yes        # upgrade automatically
-snitch upgrade -v 0.1.7     # install specific version
+snitchx watch -i 1s | jq '.count'
+snitchx watch -l -i 500ms
+```
+
+### `snitchx trace`
+
+Print new and closed connections as they happen.
+
+```bash
+snitchx trace
+```
+
+### `snitchx upgrade`
+
+Check for updates and upgrade in-place.
+
+```bash
+snitchx upgrade              # check for updates
+snitchx upgrade --yes        # upgrade automatically
+snitchx upgrade -v 0.1.7     # install specific version
 ```
 
 ## filters
 
-shortcut flags work on all commands:
+Shortcut flags work on all commands:
 
 ```
 -t, --tcp           tcp only
@@ -265,9 +246,17 @@ shortcut flags work on all commands:
 -6, --ipv6          ipv6 only
 ```
 
-## resolution
+For more specific filtering, use `key=value` syntax:
 
-dns and service name resolution options:
+```bash
+snitchx ls proto=tcp state=listen
+snitchx ls pid=1234
+snitchx ls proc=nginx
+snitchx ls lport=443
+snitchx ls contains=google
+```
+
+## resolution
 
 ```
 --resolve-addrs     resolve ip addresses to hostnames (default: true)
@@ -275,21 +264,12 @@ dns and service name resolution options:
 --no-cache          disable dns caching (force fresh lookups)
 ```
 
-dns lookups are performed in parallel and cached for performance. use `--no-cache` to bypass the cache for debugging or when addresses change frequently.
-
-for more specific filtering, use `key=value` syntax with `ls`:
-
-```bash
-snitch ls proto=tcp state=listen
-snitch ls pid=1234
-snitch ls proc=nginx
-snitch ls lport=443
-snitch ls contains=google
-```
+DNS lookups are performed in parallel and cached. Use `--no-cache` to bypass
+the cache for debugging or when addresses change frequently.
 
 ## output
 
-styled table (default):
+Styled table (default):
 
 ```
   ╭─────────────────┬───────┬───────┬─────────────┬─────────────────┬────────╮
@@ -301,7 +281,7 @@ styled table (default):
   2 connections
 ```
 
-plain output (`-p`):
+Plain output (`-p`):
 
 ```
 PROCESS    PID    PROTO   STATE    LADDR       LPORT
@@ -311,7 +291,7 @@ postgres   5678   tcp     LISTEN   127.0.0.1   5432
 
 ## configuration
 
-optional config file at `~/.config/snitch/snitch.toml`:
+Optional config file at `~/.config/snitchx/snitchx.toml`:
 
 ```toml
 [defaults]
@@ -323,30 +303,74 @@ theme = "auto"       # color theme: auto, dark, light, mono
 remember_state = false   # remember view options between sessions
 ```
 
+Available themes: `ansi`, `catppuccin-mocha`, `catppuccin-macchiato`,
+`catppuccin-frappe`, `catppuccin-latte`, `gruvbox-dark`, `gruvbox-light`,
+`dracula`, `nord`, `tokyo-night`, `tokyo-night-storm`, `tokyo-night-light`,
+`solarized-dark`, `solarized-light`, `one-dark`, `mono`.
+
 ### remembering view options
 
-when `remember_state = true`, the tui will save and restore:
+When `remember_state = true`, the TUI saves and restores:
 
 - filter toggles (tcp/udp, listen/established/other)
 - sort field and direction
 - address and port resolution settings
 
-state is saved to `$XDG_STATE_HOME/snitch/tui.json` (defaults to `~/.local/state/snitch/tui.json`).
-
-cli flags always take priority over saved state.
+State is saved to `$XDG_STATE_HOME/snitchx/tui.json` (defaults to
+`~/.local/state/snitchx/tui.json`). CLI flags always take priority over saved
+state.
 
 ### environment variables
 
 ```bash
-SNITCH_THEME=dark          # set default theme
-SNITCH_RESOLVE=0           # disable dns resolution
-SNITCH_DNS_CACHE=0         # disable dns caching
-SNITCH_NO_COLOR=1          # disable color output
-SNITCH_CONFIG=/path/to     # custom config file path
+SNITCHX_THEME=dark          # set default theme
+SNITCHX_RESOLVE=0           # disable dns resolution
+SNITCHX_DNS_CACHE=0         # disable dns caching
+SNITCHX_NO_COLOR=1          # disable color output
+SNITCHX_CONFIG=/path/to     # custom config file path
 ```
+
+## platform notes
+
+### Windows
+
+snitchX uses the Windows IP helper API (`iphlpapi.dll`) to enumerate IPv4 and
+IPv6 TCP/UDP endpoints with their owning PIDs, then resolves process names and
+accounts best-effort. Protected/system processes may show an empty name. The
+Windows UDP owner table does not expose a remote address or connection state,
+so UDP sockets are reported as `LISTEN` with a wildcard remote. Run in an
+elevated terminal for the most complete process information.
+
+### Linux
+
+snitchX reads from `/proc/net/*`. Root or `CAP_NET_ADMIN` may be required for
+full process information.
+
+### macOS
+
+snitchX uses libproc and system APIs. Elevated privileges may be required for
+full process information.
 
 ## requirements
 
-- linux or macos
-- linux: reads from `/proc/net/*`, root or `CAP_NET_ADMIN` for full process info
-- macos: uses system APIs, may require sudo for full process info
+- macOS, Linux, or Windows 10/11/Server
+- Windows: amd64 or arm64; Linux: amd64, arm64, armv7; macOS: amd64 or arm64
+
+snitchX does not make network connections, except for `snitchx upgrade`, which
+fetches releases from GitHub. It does not write to system files or collect or
+transmit any data.
+
+## development
+
+```bash
+go build ./...
+go test ./...
+
+# cross-compile for Windows
+GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o snitchx.exe .
+```
+
+## license
+
+MIT. snitchX is a fork of [karol-broda/snitch](https://github.com/karol-broda/snitch);
+the original copyright and license are retained in [LICENSE](LICENSE).

@@ -47,7 +47,7 @@ let
   # read generated TOML file content
   readGeneratedToml = evalResult:
     let
-      configFile = evalResult.config.xdg.configFile."snitch/snitch.toml" or null;
+      configFile = evalResult.config.xdg.configFile."snitchx/snitchx.toml" or null;
     in
     if configFile != null && configFile ? source
     then builtins.readFile configFile.source
@@ -59,7 +59,7 @@ let
     moduleDisabled = {
       name = "module-disabled";
       config = {
-        programs.snitch.enable = false;
+        programs.snitchx.enable = false;
       };
       assertions = evalResult: [
         {
@@ -67,7 +67,7 @@ let
           message = "packages should be empty when disabled";
         }
         {
-          assertion = !(evalResult.config.xdg.configFile ? "snitch/snitch.toml");
+          assertion = !(evalResult.config.xdg.configFile ? "snitchx/snitchx.toml");
           message = "config file should not exist when disabled";
         }
       ];
@@ -77,7 +77,7 @@ let
     moduleEnabledDefaults = {
       name = "module-enabled-defaults";
       config = {
-        programs.snitch.enable = true;
+        programs.snitchx.enable = true;
       };
       assertions = evalResult: [
         {
@@ -91,7 +91,7 @@ let
     themeValidation = {
       name = "theme-validation";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings.defaults.theme = "catppuccin-mocha";
         };
@@ -116,7 +116,7 @@ let
     fullConfiguration = {
       name = "full-configuration";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings.defaults = {
             interval = "2s";
@@ -183,7 +183,7 @@ let
     outputFormatCsv = {
       name = "output-format-csv";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings.defaults.output_format = "csv";
         };
@@ -204,7 +204,7 @@ let
     unitsIec = {
       name = "units-iec";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings.defaults.units = "iec";
         };
@@ -225,7 +225,7 @@ let
     colorNever = {
       name = "color-never";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings.defaults.color = "never";
         };
@@ -246,7 +246,7 @@ let
     freeformCustomKeys = {
       name = "freeform-custom-keys";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings = {
             defaults.theme = "dracula";
@@ -295,7 +295,7 @@ let
         name = "all-themes";
         # use the last theme as the test config
         config = {
-          programs.snitch = {
+          programs.snitchx = {
             enable = true;
             settings.defaults.theme = "auto";
           };
@@ -307,7 +307,7 @@ let
               (theme:
                 let
                   result = evalModule {
-                    programs.snitch = {
+                    programs.snitchx = {
                       enable = true;
                       settings.defaults.theme = theme;
                     };
@@ -338,7 +338,7 @@ let
     fieldsListSerialization = {
       name = "fields-list-serialization";
       config = {
-        programs.snitch = {
+        programs.snitchx = {
           enable = true;
           settings.defaults.fields = [ "pid" "process" "proto" "state" ];
         };

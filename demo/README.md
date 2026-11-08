@@ -1,10 +1,10 @@
 # Demo Recording
 
-This directory contains files for recording the snitch demo GIF in a controlled Docker environment.
+This directory contains files for recording the snitchx demo GIF in a controlled Docker environment.
 
 ## Files
 
-- `Dockerfile` - builds snitch and sets up fake network services
+- `Dockerfile` - builds snitchx and sets up fake network services
 - `demo.tape` - VHS script that records the demo
 - `entrypoint.sh` - starts fake services before recording
 
@@ -14,17 +14,17 @@ From the project root:
 
 ```bash
 # build the demo image
-docker build -f demo/Dockerfile -t snitch-demo .
+docker build -f demo/Dockerfile -t snitchx-demo .
 
 # run and output demo.gif to this directory
-docker run --rm -v $(pwd)/demo:/output snitch-demo
+docker run --rm -v $(pwd)/demo:/output snitchx-demo
 ```
 
 The resulting `demo.gif` will be saved to this directory.
 
 ## Fake Services
 
-The container runs several fake services to demonstrate snitch:
+The container runs several fake services to demonstrate snitchx:
 
 | Service | Port | Protocol |
 |---------|------|----------|

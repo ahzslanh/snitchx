@@ -11,17 +11,17 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/config"
-	"github.com/karol-broda/snitch/internal/resolver"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/config"
+	"github.com/ahzslanh/snitchx/internal/resolver"
 
 	"github.com/spf13/cobra"
 )
 
 type TraceEvent struct {
-	Timestamp  time.Time             `json:"ts"`
-	Event      string                `json:"event"` // "opened" or "closed"
-	Connection collector.Connection  `json:"connection"`
+	Timestamp  time.Time            `json:"ts"`
+	Event      string               `json:"event"` // "opened" or "closed"
+	Connection collector.Connection `json:"connection"`
 }
 
 var (
@@ -37,7 +37,7 @@ var traceCmd = &cobra.Command{
 	Long: `Print new/closed connections as they happen.
 	
 Filters are specified in key=value format. For example:
-  snitch trace proto=tcp state=established
+  snitchx trace proto=tcp state=established
 
 Available filters:
   proto, state, pid, proc, lport, rport, user, laddr, raddr, contains
@@ -49,7 +49,7 @@ Available filters:
 
 func runTraceCommand(args []string) {
 	cfg := config.Get()
-	
+
 	// configure resolver with cache setting
 	effectiveNoCache := noCache || !cfg.Defaults.DNSCache
 	resolver.SetNoCache(effectiveNoCache)
@@ -72,7 +72,7 @@ func runTraceCommand(args []string) {
 
 	// Track connections using a key-based approach
 	currentConnections := make(map[string]collector.Connection)
-	
+
 	// Get initial snapshot
 	initialConnections, err := collector.GetConnections()
 	if err != nil {
@@ -102,7 +102,7 @@ func runTraceCommand(args []string) {
 
 			filteredNew := collector.FilterConnections(newConnections, filters)
 			newConnectionsMap := make(map[string]collector.Connection)
-			
+
 			// Build map of new connections
 			for _, conn := range filteredNew {
 				key := getConnectionKey(conn)
@@ -171,7 +171,7 @@ func printTraceEventJSON(event TraceEvent) {
 
 func printTraceEventHuman(event TraceEvent) {
 	conn := event.Connection
-	
+
 	timestamp := ""
 	if traceTimestamp {
 		timestamp = event.Timestamp.Format("15:04:05.000") + " "
@@ -186,7 +186,7 @@ func printTraceEventHuman(event TraceEvent) {
 	raddr := conn.Raddr
 	lportStr := fmt.Sprintf("%d", conn.Lport)
 	rportStr := fmt.Sprintf("%d", conn.Rport)
-	
+
 	// apply name resolution
 	if resolveAddrs {
 		if resolvedLaddr := resolver.ResolveAddr(conn.Laddr); resolvedLaddr != conn.Laddr {

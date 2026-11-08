@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/karol-broda/snitch/internal/collector"
-	"github.com/karol-broda/snitch/internal/color"
-	"github.com/karol-broda/snitch/internal/config"
-	"github.com/karol-broda/snitch/internal/resolver"
+	"github.com/ahzslanh/snitchx/internal/collector"
+	"github.com/ahzslanh/snitchx/internal/color"
+	"github.com/ahzslanh/snitchx/internal/config"
+	"github.com/ahzslanh/snitchx/internal/resolver"
 	"strconv"
 	"strings"
 
@@ -88,7 +88,7 @@ func NewRuntime(args []string, colorMode string) (*Runtime, error) {
 	color.Init(colorMode)
 
 	cfg := config.Get()
-	
+
 	// configure resolver with cache setting (flag overrides config)
 	effectiveNoCache := noCache || !cfg.Defaults.DNSCache
 	resolver.SetNoCache(effectiveNoCache)
@@ -219,7 +219,7 @@ func applyFilter(filters *collector.FilterOptions, key, value string) error {
 // FilterFlagsHelp returns the help text for common filter flags.
 const FilterFlagsHelp = `
 Filters are specified in key=value format. For example:
-  snitch ls proto=tcp state=established
+  snitchx ls proto=tcp state=established
 
 Available filters:
   proto, state, pid, proc, lport, rport, user, laddr, raddr, contains, if, mark, namespace, inode, since`
@@ -241,4 +241,3 @@ func addResolutionFlags(cmd *cobra.Command) {
 	cmd.Flags().BoolVar(&resolvePorts, "resolve-ports", false, "Resolve port numbers to service names")
 	cmd.Flags().BoolVar(&noCache, "no-cache", !cfg.Defaults.DNSCache, "Disable DNS caching (force fresh lookups)")
 }
-

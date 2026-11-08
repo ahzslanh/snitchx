@@ -64,15 +64,33 @@ function Get-PlatformArch {
 
 function Get-NormalizedVersion([string]$Value) {
     if (-not $Value) { return "" }
-    return $Value.Trim().TrimStart("v")
+    return $Value.Trim() -replace '^[vV]', ''
+}
+
+function Split-SemVer([string]$Value) {
+    $clean = Get-NormalizedVersion $Value
+    $parts = $clean.Split('-', 2)
+    $core = @(0, 0, 0)
+    $segments = $parts[0].Split('.')
+    for ($i = 0; $i -lt 3 -and $i -lt $segments.Count; $i++) {
+        $n = 0
+        if ([int]::TryParse($segments[$i], [ref]$n)) { $core[$i] = $n }
+    }
+    $pre = if ($parts.Count -gt 1) { $parts[1] } else { "" }
+    return [pscustomobject]@{ Core = $core; Pre = $pre }
 }
 
 function Compare-VersionStrings([string]$Left, [string]$Right) {
-    try {
-        return ([version]$Left).CompareTo([version]$Right)
-    } catch {
-        return [string]::CompareOrdinal($Left, $Right)
+    $l = Split-SemVer $Left
+    $r = Split-SemVer $Right
+    for ($i = 0; $i -lt 3; $i++) {
+        if ($l.Core[$i] -lt $r.Core[$i]) { return -1 }
+        if ($l.Core[$i] -gt $r.Core[$i]) { return 1 }
     }
+    if ($l.Pre -eq $r.Pre) { return 0 }
+    if (-not $l.Pre) { return 1 }
+    if (-not $r.Pre) { return -1 }
+    return [string]::CompareOrdinal($l.Pre, $r.Pre)
 }
 
 function Get-InstalledVersion([string]$Path) {

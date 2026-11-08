@@ -56,7 +56,7 @@
           pname = "snitchx";
           inherit version;
           src = self;
-          vendorHash = "sha256-fX3wOqeOgjH7AuWGxPQxJ+wbhp240CW8tiF4rVUUDzk=";
+          vendorHash = "sha256-SWyo/2q0kvaMXeoeH/q/f5oLwOqtbzcAACFoMRLJl3c=";
           # darwin requires cgo for libproc, linux uses pure go with /proc
           env.CGO_ENABLED = if isDarwin then "1" else "0";
           env.GOTOOLCHAIN = "local";
